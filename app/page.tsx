@@ -17,19 +17,26 @@ export default function LoginPage() {
     abhaId: "",
     phoneNumber: "",
     role: "",
+    credentials: "",
+    licenceId: "",
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Login attempt:", formData)
-    // Handle login logic here
-    // For now, redirect to dashboard after successful form submission
-    router.push("/dashboard")
+
+    if (formData.role === "doctor" || formData.role === "admin") {
+      router.push("/doctor-dashboard")
+    } else {
+      router.push("/dashboard")
+    }
   }
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
+
+  const requiresAdditionalFields = formData.role === "doctor" || formData.role === "admin"
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-lime-50 flex items-center justify-center p-4">
@@ -110,6 +117,40 @@ export default function LoginPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {requiresAdditionalFields && (
+                <>
+                  <div className="space-y-3">
+                    <Label htmlFor="credentials" className="text-foreground font-semibold text-base">
+                      CREDENTIALS
+                    </Label>
+                    <Input
+                      id="credentials"
+                      type="text"
+                      placeholder="Enter your medical credentials"
+                      value={formData.credentials}
+                      onChange={(e) => handleInputChange("credentials", e.target.value)}
+                      className="h-12 border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 bg-input text-base"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label htmlFor="licenceId" className="text-foreground font-semibold text-base">
+                      LICENCE ID
+                    </Label>
+                    <Input
+                      id="licenceId"
+                      type="text"
+                      placeholder="Enter your medical licence ID"
+                      value={formData.licenceId}
+                      onChange={(e) => handleInputChange("licenceId", e.target.value)}
+                      className="h-12 border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 bg-input text-base"
+                      required
+                    />
+                  </div>
+                </>
+              )}
 
               <Button
                 type="submit"
